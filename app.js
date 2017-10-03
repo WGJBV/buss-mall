@@ -1,7 +1,8 @@
 'use strict';
-
+var productList = document.getElementById('product-list');
 Product.productArray = [];
 Product.lastDisplayed = [];
+Product.sumVotes = 0;
 var imgEl1 = document.getElementById('product-img1');
 var imgEl2 = document.getElementById('product-img2');
 var imgEl3 = document.getElementById('product-img3');
@@ -18,21 +19,33 @@ function Product (name, filepath){
 }
 
 function handleClick (e){
-  //what to do when it equals 25 clicks
-  if(Product.votes < 10){
-    Product.votes++;
-  }else{
-    console.log('end');
-  }
-  //counts vote for each image
   for (var i = 0; i < Product.productArray.length; i++){
     if(e.target.id === Product.productArray[i].name){
       Product.productArray[i].votes++;
     }
   }
-  //call random product function again
+  for (var j = 0; j < Product.productArray.length; j++){
+    Product.sumVotes += Product.productArray[j].votes;
+  }
+  if (Product.sumVotes >= 25){
+    imgEl1.removeEventListener('click', handleClick);
+    imgEl2.removeEventListener('click', handleClick);
+    imgEl3.removeEventListener('click', handleClick);
+    render();
+  }
+  Product.sumVotes = 0;
   randomImg ();
-  console.log(Product.productArray);
+}
+
+function render (){
+  var ulEl = document.createElement('ul');
+
+  for (var i = 0; i < Product.productArray.length; i++){
+    var liEl = document.createElement('li');
+    liEl.textContent = Product.productArray[i].name + ' has ' + Product.productArray[i].votes + ' votes and showed on the screen ' + Product.productArray[i].views + ' many times.';
+    ulEl.appendChild(liEl);
+  }
+  productList.appendChild(ulEl);
 }
 
 function randomImg (){
