@@ -1,5 +1,5 @@
 'use strict';
-var productList = document.getElementById('product-list');
+
 Product.productArray = [];
 Product.lastDisplayed = [];
 Product.sumVotes = 0;
@@ -27,7 +27,7 @@ function handleClick (e){
   for (var j = 0; j < Product.productArray.length; j++){
     Product.sumVotes += Product.productArray[j].votes;
   }
-  if (Product.sumVotes >= 25){
+  if (Product.sumVotes >= 10){
     imgEl1.removeEventListener('click', handleClick);
     imgEl2.removeEventListener('click', handleClick);
     imgEl3.removeEventListener('click', handleClick);
@@ -38,14 +38,55 @@ function handleClick (e){
 }
 
 function render (){
-  var ulEl = document.createElement('ul');
+  var graph = document.getElementById('chart').getContext('2d');
+  var barGraph = new Chart(graph, {
+    type: 'bar',
+    data: {
+      labels: [Product.productArray[0].name],
+      datasets: [{
+        label: Product.productArray[0].name,
+        data: [],
+        backgroundColor: [
+          'rgba(255,99,132,0.2)',
+          'rgba(54,162,235,0.2)',
+          'rgba(255,206,86,0.2)',
+          'rgba(75,192,192,0.2)',
+          'rgba(153,102,255,0.2)',
+          'rgba(255,159,64,0.2)'
+        ],
+        borderColor: [
+          'rgba(255,99,132,1)',
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 206, 86, 1)',
+          'rgba(75, 192, 192, 1)',
+          'rgba(153, 102, 255, 1)',
+          'rgba(255, 159, 64, 1)'
+        ],
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        yAxes: [{
+          ticks: {
+            beginAtZero:true
+          }
+        }]
+      }
+    }
+  });
+  for (var i = 0; i < Product.productArray.length; i++){
+    graph.data.datasets.data[i] = Product.productArray[i].votes;
+  }
+  chart.appendChild(graph);
+  /*var ulEl = document.createElement('ul');
 
   for (var i = 0; i < Product.productArray.length; i++){
     var liEl = document.createElement('li');
     liEl.textContent = Product.productArray[i].name + ' has ' + Product.productArray[i].votes + ' votes and showed on the screen ' + Product.productArray[i].views + ' many times.';
     ulEl.appendChild(liEl);
   }
-  productList.appendChild(ulEl);
+  productList.appendChild(ulEl);*/
 }
 
 function randomImg (){
